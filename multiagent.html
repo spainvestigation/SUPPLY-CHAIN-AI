@@ -1713,6 +1713,198 @@
 
     <div class="particle-bg"></div>
     <canvas id="globe-canvas"></canvas>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Supply Chain Intelligence AI</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Icons -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- CSS -->
+  <style>
+    body[data-theme="dark"] { background:#111; color:#eee; }
+    body[data-theme="light"] { background:#f9f9f9; color:#222; }
+    .navbar { display:flex; justify-content:space-between; padding:10px; background:#333; color:#fff; }
+    .nav-btn { margin:0 5px; }
+    .glass-card { background:rgba(255,255,255,0.1); padding:20px; margin:20px; border-radius:10px; }
+    .hidden { display:none; }
+    .chatbox { position:fixed; bottom:10px; right:10px; width:300px; background:#222; color:#fff; padding:10px; border-radius:10px; }
+    .chat-body { max-height:200px; overflow-y:auto; }
+    .chat-body p { margin:5px 0; }
+  </style>
+</head>
+
+<body data-theme="dark">
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="brand">
+    <i class="fa-solid fa-globe"></i>
+    <h1>SUPPLY CHAIN INTELLIGENCE AI</h1>
+  </div>
+  <div class="nav-actions">
+    <button id="theme-toggle" class="nav-btn"><i class="fa-solid fa-moon"></i> Dark</button>
+    <button id="voice-cmd-btn" class="nav-btn"><i class="fa-solid fa-microphone"></i> Voice</button>
+    <button onclick="document.getElementById('login-modal').classList.remove('hidden')" class="nav-btn"><i class="fa-solid fa-user"></i> Login</button>
+    <button onclick="document.getElementById('signup-modal').classList.remove('hidden')" class="nav-btn"><i class="fa-solid fa-user-plus"></i> Sign Up</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="glass-card">
+  <h2>Intelligent Route Optimization</h2>
+  <p>AI-powered global supply chain analysis</p>
+</div>
+
+<!-- ROUTE ANALYSIS -->
+<div class="glass-card">
+  <form id="analysis-form">
+    <input type="text" id="origin" placeholder="Origin" required>
+    <input type="text" id="destination" placeholder="Destination" required>
+    <select id="cargo-type">
+      <option value="electronics">Electronics</option>
+      <option value="heavy">Heavy Machinery</option>
+    </select>
+    <button type="submit" class="btn-analyze">Analyze Route</button>
+  </form>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div id="payment-modal" class="glass-card">
+  <h2>Complete Payment</h2>
+  <div id="payment-timer">05:00</div>
+</div>
+
+<!-- LOGIN MODAL -->
+<div id="login-modal" class="glass-card hidden">
+  <h2>User Login</h2>
+  <input type="text" id="login-user" placeholder="Username" required>
+  <input type="password" id="login-pass" placeholder="Password" required>
+  <button onclick="loginUser()">Login</button>
+  <button onclick="closeLogin()">Cancel</button>
+</div>
+
+<!-- SIGNUP MODAL -->
+<div id="signup-modal" class="glass-card hidden">
+  <h2>Create Account</h2>
+  <input type="text" id="signup-user" placeholder="Username" required>
+  <input type="email" id="signup-email" placeholder="Email" required>
+  <input type="password" id="signup-pass" placeholder="Password" required>
+  <input type="password" id="signup-confirm" placeholder="Confirm Password" required>
+  <button onclick="signupUser()">Sign Up</button>
+  <button onclick="closeSignup()">Cancel</button>
+</div>
+
+<!-- USER DASHBOARD -->
+<div id="user-dashboard" class="glass-card hidden">
+  <h2>Welcome, <span id="user-name"></span></h2>
+  <p>Email: <span id="user-email"></span></p>
+</div>
+
+<!-- CHATBOX -->
+<div id="chatbox" class="chatbox">
+  <div class="chat-header">AI Assistant</div>
+  <div class="chat-body" id="chat-body"></div>
+  <input type="text" id="chat-input" placeholder="Ask about supply chain...">
+  <button onclick="sendMessage()">Send</button>
+</div>
+
+<!-- NOTIFICATIONS -->
+<div class="glass-card">
+  <h2>Notifications</h2>
+  <ul id="notif-list"></ul>
+</div>
+
+<!-- JS -->
+<script>
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let currentUser = null;
+
+// SIGNUP
+function signupUser() {
+  const user = document.getElementById("signup-user").value;
+  const email = document.getElementById("signup-email").value;
+  const pass = document.getElementById("signup-pass").value;
+  const confirm = document.getElementById("signup-confirm").value;
+  if(pass !== confirm) { alert("Passwords do not match!"); return; }
+  if(users.find(u => u.user === user)) { alert("Username exists!"); return; }
+  users.push({user, email, pass});
+  localStorage.setItem("users", JSON.stringify(users));
+  alert("Signup successful!");
+  closeSignup();
+}
+
+// LOGIN
+function loginUser() {
+  const user = document.getElementById("login-user").value;
+  const pass = document.getElementById("login-pass").value;
+  const found = users.find(u => u.user === user && u.pass === pass);
+  if(found) {
+    currentUser = found;
+    localStorage.setItem("currentUser", JSON.stringify(found));
+    document.getElementById("user-name").textContent = found.user;
+    document.getElementById("user-email").textContent = found.email;
+    document.getElementById("user-dashboard").classList.remove("hidden");
+    alert("Welcome back, " + user + "!");
+    closeLogin();
+  } else { alert("Invalid credentials."); }
+}
+function closeLogin(){ document.getElementById("login-modal").classList.add("hidden"); }
+function closeSignup(){ document.getElementById("signup-modal").classList.add("hidden"); }
+
+// AUTO LOGIN
+window.onload = () => {
+  const savedUser = JSON.parse(localStorage.getItem("currentUser"));
+  if(savedUser) {
+    document.getElementById("user-name").textContent = savedUser.user;
+    document.getElementById("user-email").textContent = savedUser.email;
+    document.getElementById("user-dashboard").classList.remove("hidden");
+  }
+};
+
+// THEME TOGGLE
+document.getElementById("theme-toggle").addEventListener("click", () => {
+  const body = document.body;
+  if(body.dataset.theme === "dark") {
+    body.dataset.theme = "light";
+    document.getElementById("theme-toggle").innerHTML = '<i class="fa-solid fa-sun"></i> Light';
+  } else {
+    body.dataset.theme = "dark";
+    document.getElementById("theme-toggle").innerHTML = '<i class="fa-solid fa-moon"></i> Dark';
+  }
+});
+
+// ROUTE ANALYSIS
+document.getElementById("analysis-form").addEventListener("submit", function(e) {
+  e.preventDefault();
+  const origin = document.getElementById("origin").value;
+  const destination = document.getElementById("destination").value;
+  const cargo = document.getElementById("cargo-type").value;
+  let distance = Math.floor(Math.random() * 10000) + 1000;
+  let cost = cargo === "electronics" ? distance * 1.2 : distance * 2.0;
+  alert(`Route: ${origin} → ${destination}\nDistance: ${distance} km\nEstimated Cost: $${cost.toFixed(2)}`);
+});
+
+// PAYMENT TIMER
+let timer = 300;
+function startPaymentTimer() {
+  const display = document.getElementById("payment-timer");
+  const interval = setInterval(() => {
+    let minutes = Math.floor(timer / 60);
+    let seconds = timer % 60;
+    display.textContent = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+    if(timer <= 0) { clearInterval(interval); alert("Payment expired!"); }
+    timer--;
+  }, 1000);
+}
+startPaymentTimer();
+
+// VOICE INPUT + OUTPUT
+const recognition = new(window.SpeechRecognition || window.webkitSpeechRecognition)
 
     <!-- UPI Payment Modal -->
     <div class="payment-modal" id="payment-modal">
@@ -3977,7 +4169,7 @@
                             <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
                                 <i class="fa-solid fa-lightbulb" style="color: var(--primary);"></i>
                                 <span style="font-weight: 700; color: var(--text-primary);">Smart Recommendations</span>
-                            </div>
+                            </div>A
                             <ul style="line-height: 2; color: var(--text-secondary);">
                                 <li><strong>Ocean:</strong> Ideal for non-urgent bulk shipments, most eco-friendly, lowest cost</li>
                                 <li><strong>Air:</strong> Best for time-critical, high-value goods, perishables requiring fast delivery</li>
